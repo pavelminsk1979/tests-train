@@ -24,6 +24,9 @@ import {
 } from './feature/comments/domaims/domain-comment';
 import { CommentController } from './feature/comments/api/comment-controller';
 import { TestController } from './feature/test/test-controller';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 /*декоратора @Module()---ЭТО КАК В ЭКСПРЕС КОМПОЗИШЕН-РУУТ..
 в NestJS используются для организации
@@ -41,11 +44,14 @@ import { TestController } from './feature/test/test-controller';
       их внедрению зависимостей.   */
 @Module({
   imports: [
-    /*  тут подключение к удаленной базе данных ...url aдрес
-   этой базы а в конце название конкретного отдела(projectNest)*/
     MongooseModule.forRoot(
-      'mongodb+srv://pavvelpotapov:PV2PsPiYpmxxdhn9@cluster0.8s1u6fi.mongodb.net/projectNest13',
+      process.env.ENV === 'TESTING'
+        ? process.env.MONGO_URL_TEST ?? ''
+        : process.env.MONGO_URL ?? '',
     ),
+
+    // MongooseModule.forRoot(process.env.MONGO_URL ?? ''),
+
     /*тут регистрация СХЕМЫ монгусовской модельки*/
     MongooseModule.forFeature([
       {
@@ -82,6 +88,7 @@ import { TestController } from './feature/test/test-controller';
     CommentQueryRepository,
   ],
 })
+
 /*export class AppModule {} в данном контексте
 представляет сам модуль. То что собрано -сконфигурировано
 выше--это и есть МОДУЛЬ и это как часть чегото, и часть

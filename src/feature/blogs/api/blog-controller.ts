@@ -53,10 +53,11 @@ app.useGlobalPipes(new ValidationPipe());
      src/exception-filter.ts*/
     @Body() createBlogInputModel: CreateBlogInputModel,
   ): Promise<ViewBlog> {
+    debugger;
     const id = await this.blogService.createBlog(createBlogInputModel);
 
     const blog = await this.blogQueryRepository.getBlogById(id);
-
+    debugger;
     if (blog) {
       return blog;
     } else {
