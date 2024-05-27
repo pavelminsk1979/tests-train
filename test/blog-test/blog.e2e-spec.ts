@@ -1,3 +1,57 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { AppModule } from '../../src/app.module';
+import request from 'supertest';
+import { applyAppSettings } from '../../src/settings/apply-app-settings';
+import { BlogService } from '../../src/feature/blogs/services/blog-service';
+
+/////////////////////////////////////////////////////
+/* ТУТ В ТЕСТЕ -  КАК создать сущность 
+и в этом же  тесте заглянуть в базу данных
+ШПИОНОМ  и проверить чть сушность имеется там*/
+////////////////////////////////////////////
+
+describe('tests for andpoint blogs', () => {
+  let app;
+
+  beforeAll(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+
+    applyAppSettings(app);
+
+    await app.init();
+
+    //ЭТО ДЛЯ ОЧИСТКИ БАЗЫ ДАННЫХ
+    await request(app.getHttpServer()).delete('/testing/all-data');
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  const nameBlog = 'name11111';
+  it('should create blog', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/blogs')
+      .send({
+        name: nameBlog,
+        description: 'description1111',
+        websiteUrl: 'https://www.outue1.com/',
+      })
+      .expect(201);
+
+    expect(res.body.name).toEqual(nameBlog);
+  });
+
+  /*  it('get blogs', async () => {
+    const res = await request(app.getHttpServer()).get('/blogs').expect(200);
+    console.log(res.body);
+  });*/
+});
+
 /*import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../../src/app.module';
 import request from 'supertest';
@@ -5,6 +59,11 @@ import { applyAppSettings } from '../../src/settings/apply-app-settings';
 import { BlogQueryRepository } from '../../src/feature/blogs/repositories/blog-query-repository';
 import { blogQueryRepositoryMock } from '../mock/blog-query-repository-mock';
 import { BlogManagerForTest } from '../utils/blog-manager-for-test';
+
+/////////////////////////////////////////////////////
+// ТУТ В ТЕСТЕ -  КАК ЗАМОКАТЬ какойто уровень-класс
+////////////////////////////////////////////
+
 
 describe('tests for andpoint blogs', () => {
   /!* переменная app, которая будет представлять
@@ -26,7 +85,7 @@ describe('tests for andpoint blogs', () => {
     app = moduleFixture.createNestApplication();
 
     applyAppSettings(app);
-    /!* Вызывается метод app.init(), который запускает 
+    /!* Вызывается метод app.init(), который запускает
     инициализацию приложения. Это включает в себя 
     инициализацию всех модулей, провайдеров, 
     контроллеров и других компонентов, необходимых
@@ -69,7 +128,7 @@ describe('tests for andpoint blogs', () => {
 
   /////////////////////////////////////////////
 
-  /!*  СОЗДАТЬ СУЩНОСТЬ ---В ОТДЕЛЬНОМ ФАЙЛЕ   КЛАСС 
+  /!*  СОЗДАТЬ СУЩНОСТЬ ---В ОТДЕЛЬНОМ ФАЙЛЕ   КЛАСС
    И СЮДА ВОЗВРАЩАЮТСЯ СУЩНОСТИ, И ЕСЛИ СУЩНОСТЕЙ
     НАДО СОЗДАТЬ МНОГО ТО ЧИТАТЬСЯ КОД БУДЕТ ЛУЧШЕ
      
@@ -90,6 +149,7 @@ describe('tests for andpoint blogs', () => {
 });*/
 //////////////////////////////////////////////
 ///////////////////////////////////////////
+/*
 
 ///////////////////////////////////////////////////
 //ТУТ ДЛЯ СОЗДАНИЯ СУЩНОСТИ  ИСПОЛЬЗУЮ КЛАСС
@@ -144,3 +204,4 @@ describe('tests for andpoint blogs', () => {
     console.log(res.body);
   });
 });
+*/

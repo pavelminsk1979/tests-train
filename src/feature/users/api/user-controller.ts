@@ -9,11 +9,14 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from '../services/user-service';
 import { UserQueryRepository } from '../repositories/user-query-repository';
 import { CreateUserInputModel, UserQueryParams } from '../types/models';
+import { AuthGuard } from '../guard/auth-guard';
 
+@UseGuards(AuthGuard)
 @Controller('users')
 /* @Controller()-- декоратор,
  который применяется к классу , указывает,
